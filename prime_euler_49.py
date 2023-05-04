@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 """ 								  """
+
 """ Title: /prime_euler_49.py					  """
 """ Description: Solution for https://projecteuler.net/problem=49 """
 """ 								  """
@@ -10,18 +11,16 @@ from prime_func import is_prime
 
 
 """ Bounds of the problem is from 1000 to 1000 """
-number=1000
 endnum=10000
 primes_list=[]
 
 """ Figure out if each number is prime                     """
 """ Spoiler: Whittle count to 1061 from 9000 possibilities """
 
-while number < endnum:
+for number in range(1000, endnum):
 	isitprime=is_prime(number)
 	if isitprime == 'prime':
 		primes_list.append(number)
-	number+=1
 #Members are simply 4-digit primes : (4799)
 
 """ Create dict (prime_dict) with each prime being a member of a list of values  """
@@ -56,17 +55,18 @@ get some candidates to focus on. You should see a pattern emerge like a sore thu
 Spoiler: Down to 174
 """
 
-for digits,prime_combos in prime_dict.items():
+for prime_combos in prime_dict.values():
 	if len(prime_combos) > 2:
 		#We need only look at sets with 3 values or more
 		#Make a copy of the list to reduce visual confusion
 		cp_prime_combos=prime_combos
 
 		delta_prime_pairs=[]
-		#Push dict of the primes abs() delta value  mapped to tuple of primes compared 
-		for prime in prime_combos:
-			for other_prime in cp_prime_combos:
-				delta_prime_pairs.append({ abs(other_prime-prime):(other_prime,prime)})
+		for prime in cp_prime_combos:
+			delta_prime_pairs.extend(
+				{abs(other_prime - prime): (other_prime, prime)}
+				for other_prime in cp_prime_combos
+			)
 		#Members look like: 2700 [(6337, 3637)]
 		#                 : 2700 [(6373, 3673)]
 		#                 : 2700 [(3637, 6337)]
@@ -85,23 +85,22 @@ for digits,prime_combos in prime_dict.items():
 
 		#At this point we can clearly see patterns based on the delta betwen primes 
 		#when printing the deltas and members.
-		
+
 		#Pull out the data and unpack 
 		#Having run the numbers I can see the delta is 3330 that solves this puzzle.
-		for delta,num_pairs in delta_dict.items():
+		for delta, num_pairs in delta_dict.items():
 			#print (delta,num_pairs)
 			#if delta == 3330:
 			#if len(num_pairs) == 4:
-			if delta != 0:
-				if len(num_pairs) >= 3: 
-					M=[ x for t in num_pairs for x in t]
-					M=[ int(x) for x in M ]
-					M=sorted(M)
-					#print (M)
-					L=[]
-					for x in M:
-						 if x not in L:
-							 L.append(x)
-					#print(L)
-					if L[0] + delta == L[1] and L[1] + delta == L[2]:
-						print("Winner:",L[0],L[1],L[2])
+			if delta != 0 and len(num_pairs) >= 3:
+				M=[ x for t in num_pairs for x in t]
+				M=[ int(x) for x in M ]
+				M=sorted(M)
+				#print (M)
+				L=[]
+				for x in M:
+					 if x not in L:
+						 L.append(x)
+				#print(L)
+				if L[0] + delta == L[1] and L[1] + delta == L[2]:
+					print("Winner:",L[0],L[1],L[2])
